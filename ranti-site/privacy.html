@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ranti · Privacy policy</title>
+<meta name="description" content="How Ranti handles your data: your dates stay on your phone; only the birthday link and automatic birthday emails use Ranti's server.">
+<meta name="theme-color" content="#160C26">
+<link rel="icon" href="/icon.png">
+<style>
+:root{--plum:#24163A;--deep:#160C26;--coral:#FF6A3D;--gold:#FFB23F;--bg:#FBF3F7;--ink:#1E1633;--soft:#6E6585;--line:#EFE4EC}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.6}
+header{background:linear-gradient(180deg,var(--deep),var(--plum));color:#fff;padding:36px 22px 30px}
+header a{color:var(--gold);text-decoration:none;font-weight:600}
+h1{font:600 34px/1.15 Georgia,serif;margin-top:10px}
+.sub{color:rgba(255,255,255,.75);margin-top:6px;font-size:15px}
+main{max-width:760px;margin:0 auto;padding:26px 22px 60px}
+h2{font:600 21px/1.3 Georgia,serif;margin:28px 0 8px}
+p,li{font-size:15.5px}
+ul{padding-left:20px}li{margin:6px 0}
+.card{background:#fff;border-radius:18px;padding:16px 18px;box-shadow:0 6px 20px rgba(42,22,64,.06);margin:12px 0}
+.card b{color:var(--coral)}
+table{width:100%;border-collapse:collapse;font-size:14.5px;background:#fff;border-radius:14px;overflow:hidden}
+th,td{text-align:left;padding:10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:#FFF1D6}
+small{color:var(--soft)}
+a{color:var(--coral)}
+</style>
+</head>
+<body>
+<header>
+  <a href="/">← Ranti</a>
+  <h1>Privacy policy</h1>
+  <div class="sub">Effective 7 October 2026 · applies to the Ranti Android app and ranti-ng.vercel.app</div>
+</header>
+<main>
+  <div class="card"><b>In one line:</b> your people, dates, notes and reminders live on your phone. Ranti's server is only used if you share your birthday link or switch on automatic birthday emails for someone. No ads, no tracking, no selling of data.</div>
+
+  <h2>Who we are</h2>
+  <p>Ranti is a birthday and reminder app made by Olaoluwa Michael, an independent developer in Nigeria. Contact: <a href="mailto:michaelolaoluwagab@gmail.com">michaelolaoluwagab@gmail.com</a>.</p>
+
+  <h2>Data that stays on your phone</h2>
+  <p>Everything you add (names, birthdays and other dates, relationships, phone numbers, emails, notes, gift ideas, plan checkmarks, reminders and settings) is stored only in the app's private storage on your device. We cannot see it. It works with no internet connection.</p>
+  <ul>
+    <li><b>Contacts (optional).</b> If you tap "Import from contacts" and allow access, Ranti reads your address book <i>on the phone</i> to find saved birthdays and to let you pick friends to ask for theirs. Your contact list is never uploaded.</li>
+    <li><b>Backups.</b> "Back up" creates a file that you choose where to keep (for example WhatsApp to yourself, Google Drive or email). Android's own device backup may also include Ranti's data in your Google account backup if you have it switched on; that is handled by Google under your Google account settings.</li>
+  </ul>
+
+  <h2>Data that uses Ranti's server (only if you use these features)</h2>
+  <table>
+    <tr><th>Feature</th><th>What is sent</th><th>Why</th></tr>
+    <tr><td>Your birthday link</td><td>A random link code, a secret key (stored only as a one-way hash), and the first name you set in the app.</td><td>So friends see "Add your birthday for &lt;name&gt;" and their answers reach only your phone.</td></tr>
+    <tr><td>Friends who use your link</td><td>The name, birthday and, if they choose, phone number and email that your friend types on the web page.</td><td>Held until your phone collects them, so they appear in your list.</td></tr>
+    <tr><td>Automatic birthday email (per person, off by default)</td><td>That person's name, email address, birthday (day and month) and your custom message, plus your first name as the sender name.</td><td>So the email can be sent on their birthday, even if your phone is off.</td></tr>
+  </table>
+  <p>Data is sent over encrypted connections (HTTPS). It is stored with our service providers: <b>Vercel</b> (hosting of ranti-ng.vercel.app), <b>Supabase</b> (database) and <b>Brevo</b> (sending the birthday emails). They process it only to provide these services. We do not sell or share data for advertising.</p>
+  <p>People who receive an automatic birthday email can unsubscribe with one click in that email; we keep their email address on an opt-out list only so they are never emailed again.</p>
+
+  <h2>What Ranti does not do</h2>
+  <ul>
+    <li>No advertising, no analytics or tracking SDKs, no location access, no account or sign-in.</li>
+    <li>No selling or renting of personal data.</li>
+    <li>Contacts are never uploaded.</li>
+  </ul>
+
+  <h2>Permissions the app asks for</h2>
+  <ul>
+    <li><b>Notifications:</b> to show your reminders.</li>
+    <li><b>Alarms &amp; reminders:</b> so reminders ring at the exact time you set.</li>
+    <li><b>Contacts (optional):</b> only for "Import from contacts", as described above.</li>
+    <li><b>Internet:</b> only for the birthday link and automatic emails.</li>
+    <li><b>Run at startup:</b> to set your reminders again after the phone restarts.</li>
+  </ul>
+
+  <h2>How long we keep server data</h2>
+  <p>Friends' entries are kept until you delete your cloud data. The automatic-email list is replaced every time your phone syncs, and a person is removed when you switch their email off or delete them. A short send log (one line per person per year) prevents double emails.</p>
+
+  <h2>Deleting your data</h2>
+  <ul>
+    <li><b>On your phone:</b> delete a person or reminder in the app, or uninstall Ranti to remove everything stored on the device.</li>
+    <li><b>On the server:</b> in the app, open Settings → Privacy → <b>Delete my cloud data</b>. This deletes your birthday link, friends' entries waiting on the server, your automatic-email list and its send log, immediately.</li>
+    <li>Or email <a href="mailto:michaelolaoluwagab@gmail.com?subject=Ranti%20data%20deletion">michaelolaoluwagab@gmail.com</a> with the subject "Ranti data deletion" and your birthday-link code (Settings → Share my birthday link). We delete it within 30 days, usually much sooner.</li>
+  </ul>
+
+  <h2>Children</h2>
+  <p>Ranti is a general-audience app and is not directed at children under 13. We do not knowingly collect personal data from children.</p>
+
+  <h2>Changes</h2>
+  <p>If this policy changes, we will update this page and the date at the top. Significant changes will be noted in the app's release notes.</p>
+
+  <p style="margin-top:30px"><small>Ranti · rántí means "remember" in Yoruba.</small></p>
+</main>
+</body>
+</html>

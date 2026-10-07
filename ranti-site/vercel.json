@@ -1,0 +1,42 @@
+{
+ "cleanUrls": false,
+ "rewrites": [
+  {
+   "source": "/b/:code",
+   "destination": "/add.html"
+  },
+  {
+   "source": "/add",
+   "destination": "/add.html"
+  },
+  {
+   "source": "/privacy",
+   "destination": "/privacy.html"
+  }
+ ],
+ "crons": [
+  {
+   "path": "/api/cron",
+   "schedule": "0 6 * * *"
+  }
+ ],
+ "headers": [
+  {
+   "source": "/(.*)\\.apk",
+   "headers": [
+    {
+     "key": "Content-Type",
+     "value": "application/vnd.android.package-archive"
+    },
+    {
+     "key": "Content-Disposition",
+     "value": "attachment"
+    },
+    {
+     "key": "Cache-Control",
+     "value": "public, max-age=300"
+    }
+   ]
+  }
+ ]
+}

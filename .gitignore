@@ -1,0 +1,10 @@
+build/
+.gradle/
+local.properties
+*.jks
+keystore.properties
+.keystore-secrets/
+*.apk
+*.aab
+.env*
+node_modules/

@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Add your birthday 🎂 · Ranti</title>
+<meta name="description" content="Pop your birthday in, so it's never forgotten. Takes 20 seconds.">
+<meta property="og:title" content="Add your birthday 🎂">
+<meta property="og:description" content="Pop your birthday in so I never forget it. Takes 20 seconds.">
+<meta property="og:image" content="https://ranti-ng.vercel.app/og-birthday.jpg">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#160C26">
+<meta name="robots" content="noindex">
+<link rel="icon" href="/icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--plum:#24163A;--deep:#160C26;--mid:#3A2556;--coral:#FF6A3D;--gold:#FFB23F;--bg:#FBF3F7;--ink:#1E1633;--soft:#6E6585;--faint:#A79FB8;--line:#EFE4EC}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%}
+body{font-family:Inter,system-ui,sans-serif;background:linear-gradient(180deg,var(--deep),var(--plum) 45%,var(--mid));color:var(--ink);-webkit-font-smoothing:antialiased;min-height:100vh}
+.top{color:#fff;text-align:center;padding:42px 24px 26px;position:relative;overflow:hidden}
+.top:after{content:"";position:absolute;width:380px;height:380px;border-radius:50%;background:radial-gradient(circle,rgba(255,106,61,.38),transparent 65%);top:-170px;right:-150px;pointer-events:none}
+.cake{width:78px;height:78px;border-radius:50%;background:linear-gradient(135deg,var(--coral),var(--gold));display:grid;place-items:center;margin:0 auto 18px;font-size:38px;box-shadow:0 14px 34px rgba(255,106,61,.4)}
+h1{font:600 34px/1.12 Fraunces,serif;letter-spacing:-.3px}
+h1 em{font-style:normal;background:linear-gradient(135deg,var(--coral),var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent}
+.lead{margin:12px auto 0;max-width:340px;color:rgba(255,255,255,.78);font-size:15.5px;line-height:1.5}
+.card{background:#fff;border-radius:28px 28px 0 0;padding:26px 20px calc(28px + env(safe-area-inset-bottom));max-width:520px;margin:0 auto;min-height:60vh;box-shadow:0 -10px 40px rgba(0,0,0,.18)}
+@media(min-width:560px){.card{border-radius:28px;min-height:0;margin-bottom:40px}}
+label{display:block;font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--soft);margin:18px 0 8px}
+label small{text-transform:none;letter-spacing:0;font-weight:500;color:var(--faint)}
+input,select{width:100%;font:500 17px Inter,system-ui,sans-serif;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:16px;padding:15px 14px;outline:none;-webkit-appearance:none;appearance:none}
+select{background-image:linear-gradient(45deg,transparent 50%,var(--soft) 50%),linear-gradient(135deg,var(--soft) 50%,transparent 50%);background-position:calc(100% - 20px) 50%,calc(100% - 14px) 50%;background-size:6px 6px;background-repeat:no-repeat;padding-right:34px}
+input:focus,select:focus{border-color:var(--coral);background:#fff}
+.row{display:grid;grid-template-columns:.9fr 1.5fr 1.1fr;gap:10px}
+.hint{font-size:13px;color:var(--faint);margin-top:6px}
+.btn{width:100%;margin-top:26px;border:0;border-radius:18px;padding:18px;font:600 17px Inter,system-ui,sans-serif;color:#fff;background:linear-gradient(135deg,var(--coral),var(--gold));box-shadow:0 12px 28px rgba(255,106,61,.35);cursor:pointer}
+.btn[disabled]{opacity:.6}
+.err{display:none;margin-top:14px;background:#FFE6DA;color:#B4421F;border-radius:14px;padding:12px 14px;font-size:14px}
+.priv{margin-top:16px;font-size:12.5px;color:var(--faint);text-align:center;line-height:1.5}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.done{display:none;text-align:center;padding:26px 6px 10px}
+.done .big{font-size:62px}
+.done h2{font:600 28px/1.2 Fraunces,serif;margin:10px 0 8px}
+.done p{color:var(--soft);line-height:1.55}
+.get{display:inline-block;margin-top:22px;color:var(--coral);font-weight:600;text-decoration:none}
+.foot{text-align:center;color:rgba(255,255,255,.55);font-size:12.5px;padding:18px 0 30px}
+.foot a{color:var(--gold);text-decoration:none}
+.bad{display:none;text-align:center;padding:30px 6px}
+</style>
+</head>
+<body>
+<div class="top">
+  <div class="cake">🎂</div>
+  <h1 id="title">When is your <em>birthday?</em></h1>
+  <p class="lead" id="lead">Pop it in so it's never forgotten. Takes 20 seconds.</p>
+</div>
+<div class="card">
+  <form id="f" novalidate>
+    <label for="name">Your name</label>
+    <input id="name" name="name" maxlength="60" autocomplete="name" placeholder="e.g. Tolu Adeyemi" required>
+    <label>Your birthday</label>
+    <div class="row">
+      <select id="day" aria-label="Day" required><option value="">Day</option></select>
+      <select id="month" aria-label="Month" required><option value="">Month</option></select>
+      <input id="year" inputmode="numeric" maxlength="4" placeholder="Year" aria-label="Year (optional)">
+    </div>
+    <div class="hint">Year is optional.</div>
+    <label for="phone">WhatsApp number <small>(optional)</small></label>
+    <input id="phone" type="tel" maxlength="24" autocomplete="tel" placeholder="0803 123 4567">
+    <label for="email">Email <small>(optional, for a birthday note)</small></label>
+    <input id="email" type="email" maxlength="120" autocomplete="email" placeholder="you@example.com">
+    <div class="hp" aria-hidden="true"><input id="website" tabindex="-1" autocomplete="off"></div>
+    <button class="btn" id="go" type="submit">Save my birthday 🎉</button>
+    <div class="err" id="err"></div>
+    <p class="priv" id="priv">Only the person who shared this link sees your details. They're used only to remember and celebrate your birthday.</p>
+  </form>
+  <div class="done" id="done">
+    <div class="big">🎉</div>
+    <h2 id="doneTitle">Saved!</h2>
+    <p id="doneText">Your birthday is in. Expect some love on your day.</p>
+    <a class="get" href="/">Never forget a birthday yourself: get Ranti →</a>
+  </div>
+  <div class="bad" id="bad">
+    <div class="big" style="font-size:52px">🤔</div>
+    <h2 style="font:600 24px Fraunces,serif;margin:10px 0">This link isn't complete</h2>
+    <p style="color:var(--soft)">Ask your friend to share their Ranti link again.</p>
+    <a class="get" href="/">What is Ranti? →</a>
+  </div>
+</div>
+<div class="foot">Made with <a href="/">Ranti</a> · rántí means “remember” in Yoruba</div>
+<script>
+(function(){
+  var months=["January","February","March","April","May","June","July","August","September","October","November","December"];
+  var d=document.getElementById('day'), m=document.getElementById('month');
+  for(var i=1;i<=31;i++){var o=document.createElement('option');o.value=i;o.textContent=i;d.appendChild(o)}
+  months.forEach(function(n,i){var o=document.createElement('option');o.value=i+1;o.textContent=n;m.appendChild(o)});
+  var parts=location.pathname.split('/').filter(Boolean);
+  var code=(new URLSearchParams(location.search).get('c')||(parts[0]==='b'?parts[1]:'')||'').toLowerCase();
+  var owner='';
+  function show(id,on){document.getElementById(id).style.display=on?'block':'none'}
+  if(!/^[a-z0-9]{8,16}$/.test(code)){show('f',false);show('bad',true);return}
+  fetch('/api/owner?c='+code).then(function(r){return r.ok?r.json():Promise.reject(r.status)}).then(function(j){
+    owner=(j.name||'').trim();
+    if(owner){
+      document.getElementById('title').innerHTML='Add your birthday to <em>'+owner.replace(/[<>&"]/g,'')+"'s</em> Ranti";
+      document.getElementById('lead').textContent='So '+owner+' never forgets your day 🎂 Takes 20 seconds.';
+      document.getElementById('priv').textContent='Only '+owner+' sees your details. They are used only to remember and celebrate your birthday.';
+      document.title='Add your birthday to '+owner+"'s Ranti 🎂";
+    }
+  }).catch(function(s){if(s===404){show('f',false);show('bad',true)}});
+  var f=document.getElementById('f'), err=document.getElementById('err'), go=document.getElementById('go');
+  function fail(t){err.textContent=t;err.style.display='block'}
+  f.addEventListener('submit',function(e){
+    e.preventDefault();err.style.display='none';
+    var body={c:code,name:document.getElementById('name').value.trim(),day:+d.value,month:+m.value,
+      year:document.getElementById('year').value.trim(),phone:document.getElementById('phone').value.trim(),
+      email:document.getElementById('email').value.trim(),website:document.getElementById('website').value};
+    if(!body.name)return fail('Please enter your name.');
+    if(!body.day||!body.month)return fail('Please pick your birthday day and month.');
+    if(body.year&&!/^(19|20)\d\d$/.test(body.year))return fail('Year looks wrong. You can leave it empty.');
+    var dim=new Date(body.year?+body.year:2000,body.month,0).getDate();
+    if(body.day>dim)return fail('That date does not exist. Please check it.');
+    if(body.email&&!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(body.email))return fail('Please check the email address.');
+    go.disabled=true;go.textContent='Saving…';
+    fetch('/api/submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})
+      .then(function(r){return r.json().then(function(j){return{ok:r.ok,j:j}})})
+      .then(function(x){
+        if(!x.ok)throw new Error(x.j.error||'Could not save.');
+        var first=body.name.split(/\s+/)[0];
+        document.getElementById('doneTitle').textContent='Thank you, '+first+'!';
+        document.getElementById('doneText').textContent=(owner?owner+' will':'They will')+' remember your birthday on '+body.day+' '+months[body.month-1]+'. Expect some love on your day 🎂';
+        show('f',false);show('done',true);window.scrollTo(0,0);
+      })
+      .catch(function(e){fail(e.message||'Network problem. Please try again.');go.disabled=false;go.textContent='Save my birthday 🎉'});
+  });
+})();
+</script>
+</body>
+</html>
