@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android 11 and older: Auto Backup to the user's Google Drive. Keeps the dates database and settings. -->
+<full-backup-content>
+    <include domain="database" path="ranti.db" />
+    <include domain="sharedpref" path="ranti.xml" />
+</full-backup-content>

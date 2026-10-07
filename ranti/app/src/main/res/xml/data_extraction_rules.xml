@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android 12+: the same files for cloud backup and for moving to a new phone. -->
+<data-extraction-rules>
+    <cloud-backup>
+        <include domain="database" path="ranti.db" />
+        <include domain="sharedpref" path="ranti.xml" />
+    </cloud-backup>
+    <device-transfer>
+        <include domain="database" path="ranti.db" />
+        <include domain="sharedpref" path="ranti.xml" />
+    </device-transfer>
+</data-extraction-rules>
