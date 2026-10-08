@@ -1,0 +1,10 @@
+Copyright (c) 2026 Olaoluwa Michael (Micheal Aroja Olaoluwa). All rights reserved.
+
+Ranti, its name, logo, app code, website and texts are the property of Olaoluwa Michael.
+The source is published for reference only. No licence is granted to copy, modify,
+redistribute or publish this app or any part of it, in any app store or elsewhere,
+without written permission. Contact: michaelolaoluwagab@gmail.com
+
+Third-party components keep their own licences:
+- Android Jetpack (AndroidX, Compose, Room, WorkManager) and Kotlin: Apache License 2.0
+- Inter and Fraunces fonts: SIL Open Font License 1.1

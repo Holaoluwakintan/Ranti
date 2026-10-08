@@ -1,6 +1,32 @@
 // Daily at 06:00 UTC (07:00 Lagos): send opted-in birthday emails via Brevo.
 // Auth: Vercel Cron sends "Authorization: Bearer $CRON_SECRET". ?dry=1 lists who would get mail without sending.
-const { sb, unsubToken, send } = require('./_lib');
+const { sb, unsubToken, stripLinks, send } = require('./_lib');
+
+// Abuse guards (audit 2026-10-08): Brevo's free 300/day is shared with Blossom, and one phone must not be able to mass-mail.
+const MAX_PER_RUN = 150;
+const MAX_PER_OWNER = 20;
+// Retention (privacy policy): friends' entries 90 days, phones not seen for 12 months, send log after the next year.
+const SUBMISSION_DAYS = 90;
+const OWNER_IDLE_DAYS = 365;
+
+async function retention(year) {
+  const iso = (days) => new Date(Date.now() - days * 86400000).toISOString();
+  const out = {};
+  const r1 = await sb('ranti_submissions?created_at=lt.' + iso(SUBMISSION_DAYS), { method: 'DELETE', prefer: 'return=minimal' });
+  out.submissions = r1.ok;
+  const r2 = await sb('ranti_email_log?year=lt.' + (year - 1), { method: 'DELETE', prefer: 'return=minimal' });
+  out.log = r2.ok;
+  const idle = await sb('ranti_owners?select=owner_code&last_seen=lt.' + iso(OWNER_IDLE_DAYS) + '&limit=200');
+  out.idleOwners = idle.ok ? idle.data.length : null;
+  if (idle.ok) {
+    for (const o of idle.data) {
+      for (const t of ['ranti_submissions', 'ranti_auto_emails', 'ranti_email_log', 'ranti_owners']) {
+        await sb(t + '?owner_code=eq.' + o.owner_code, { method: 'DELETE', prefer: 'return=minimal' });
+      }
+    }
+  }
+  return out;
+}
 
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
@@ -15,7 +41,8 @@ function defaultMessage(first, from) {
 
 function buildEmail(p, fromName, base) {
   const first = p.name.trim().split(/\s+/)[0];
-  const msg = (p.message && p.message.trim()) ? p.message.trim() : defaultMessage(first, fromName);
+  const custom = stripLinks(p.message || '').trim();
+  const msg = custom ? custom : defaultMessage(first, fromName);
   const paras = msg.split(/\n{2,}/).map((t) => `<p style="margin:0 0 16px;font:16px/1.6 Inter,Arial,sans-serif;color:#1E1633">${esc(t).replace(/\n/g, '<br>')}</p>`).join('');
   const unsub = `${base}/api/unsub?e=${encodeURIComponent(p.email)}&t=${unsubToken(p.email)}`;
   const html = `<!doctype html><html><body style="margin:0;background:#FBF3F7;padding:24px 12px">
@@ -29,10 +56,10 @@ function buildEmail(p, fromName, base) {
 <p style="margin:8px 0 0;font:600 16px/1.5 Inter,Arial,sans-serif;color:#1E1633">With love,<br>${esc(fromName)}</p>
 </td></tr>
 <tr><td style="padding:20px 28px 28px;font:12px/1.5 Inter,Arial,sans-serif;color:#A79FB8">
-${esc(fromName)} asked Ranti to remember your birthday and send this note. Reply to write back.<br>
+${esc(fromName)} asked the Ranti app to remember your birthday and send this note. Replies go to the Ranti team, not to ${esc(fromName)}, so to thank them, message them directly.<br>
 Don't want birthday emails? <a href="${unsub}" style="color:#FF6A3D">Unsubscribe</a>.
 </td></tr></table></td></tr></table></body></html>`;
-  const text = `${msg}\n\nWith love,\n${fromName}\n\n--\nDon't want birthday emails? Unsubscribe: ${unsub}`;
+  const text = `${msg}\n\nWith love,\n${fromName}\n\n--\n${fromName} asked the Ranti app to send this note. Replies go to the Ranti team, not to ${fromName}.\nDon't want birthday emails? Unsubscribe: ${unsub}`;
   return { subject: `Happy birthday, ${first}! 🎂`, html, text, unsub };
 }
 
@@ -49,7 +76,12 @@ module.exports = async (req, res) => {
   const people = await sb('ranti_auto_emails?select=owner_code,local_id,name,email,message&' + filter + '&limit=500');
   if (!people.ok) return send(res, 502, { error: 'store unavailable' });
   const out = [];
+  const perOwner = {};
+  let sentCount = 0;
   for (const p of people.data) {
+    if (sentCount >= MAX_PER_RUN) { out.push({ to: p.email, skipped: 'daily cap' }); continue; }
+    perOwner[p.owner_code] = (perOwner[p.owner_code] || 0) + 1;
+    if (perOwner[p.owner_code] > MAX_PER_OWNER) { out.push({ to: p.email, skipped: 'owner cap' }); continue; }
     const opt = await sb('ranti_email_optouts?select=email&email=eq.' + encodeURIComponent(p.email));
     if (opt.ok && opt.data.length) { out.push({ to: p.email, skipped: 'unsubscribed' }); continue; }
     const done = await sb(`ranti_email_log?select=status&owner_code=eq.${p.owner_code}&local_id=eq.${p.local_id}&year=eq.${t.y}`);
@@ -62,19 +94,22 @@ module.exports = async (req, res) => {
       method: 'POST',
       headers: { 'api-key': process.env.BREVO_API_KEY, 'Content-Type': 'application/json', accept: 'application/json' },
       body: JSON.stringify({
-        sender: { name: fromName, email: process.env.FROM_EMAIL },
-        replyTo: { email: process.env.FROM_EMAIL, name: fromName },
+        sender: { name: (fromName + ' via Ranti').slice(0, 70), email: process.env.FROM_EMAIL },
+        replyTo: { email: process.env.FROM_EMAIL, name: 'Ranti' },
         to: [{ email: p.email, name: p.name }],
         subject: mail.subject, htmlContent: mail.html, textContent: mail.text,
         headers: Object.assign({ 'List-Unsubscribe': `<${mail.unsub}>` }, sandbox ? { 'X-Sib-Sandbox': 'drop' } : {}),
         tags: ['ranti-birthday'],
       }),
     });
+    sentCount++;
     const status = (r.ok ? 'sent' : 'failed ' + r.status) + (sandbox ? ' (sandbox)' : '');
     await sb('ranti_email_log', { method: 'POST', body: { owner_code: p.owner_code, local_id: p.local_id, year: t.y, email: p.email, status }, prefer: 'return=minimal,resolution=merge-duplicates' });
     out.push({ to: p.email, status });
   }
-  return send(res, 200, { date: `${t.y}-${t.m}-${t.d}`, count: out.length, results: (dry || sandbox) ? out : out.map((o) => ({ status: o.status || o.skipped })) });
+  const kept = (!dry && !sandbox) ? await retention(t.y) : null;
+  return send(res, 200, { date: `${t.y}-${t.m}-${t.d}`, count: out.length, retention: kept, results: (dry || sandbox) ? out : out.map((o) => ({ status: o.status || o.skipped })) });
 };
 module.exports.buildEmail = buildEmail;
 module.exports.lagosToday = lagosToday;
+module.exports.retention = retention;

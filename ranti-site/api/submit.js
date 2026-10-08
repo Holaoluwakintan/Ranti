@@ -1,5 +1,6 @@
 // POST from the public page: a friend adds their birthday to one owner's Ranti.
-// The insert itself runs as the anon role, so Supabase RLS (insert-only, validated lengths) is the gate.
+// The route validates every field and caps entries per owner; the insert uses the server key so the
+// public anon key needs no write access at all (revoke: see audit 2026-10-08).
 const { sb, CODE_RE, EMAIL_RE, clean, validDate, send } = require('./_lib');
 
 module.exports = async (req, res) => {
@@ -28,7 +29,7 @@ module.exports = async (req, res) => {
   if (recent.ok && recent.data.some(r => r.name.toLowerCase() === name.toLowerCase() && r.day === day && r.month === month)) return send(res, 200, { ok: true });
 
   const ins = await sb('ranti_submissions', {
-    method: 'POST', anon: true, prefer: 'return=minimal',
+    method: 'POST', prefer: 'return=minimal', // server key: this route is the only way in (audit 2026-10-08)
     body: { owner_code: code, name, day, month, year, phone: phone || null, email: email || null },
   });
   if (!ins.ok) return send(res, 400, { error: 'Could not save. Please check your details.' });

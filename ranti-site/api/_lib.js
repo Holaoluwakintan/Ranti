@@ -26,6 +26,13 @@ function clean(s, max) {
   return String(s).replace(/[\u0000-\u001f<>]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, max);
 }
 
+// Birthday messages are plain words: links are removed so nobody can use Ranti to send phishing mail.
+function stripLinks(s) {
+  return String(s || '')
+    .replace(/\b(?:https?:\/\/|www\.)\S+/gi, '[link removed]')
+    .replace(/\b[a-z0-9-]+(?:\.[a-z0-9-]+)*\.(?:com|net|org|ng|io|co|xyz|info|biz|me|link|app|site|online|top|click|ly|gl)\b(?:\/\S*)?/gi, '[link removed]');
+}
+
 function validDate(day, month, year) {
   day = Number(day); month = Number(month);
   if (!Number.isInteger(day) || !Number.isInteger(month) || month < 1 || month > 12 || day < 1) return false;
@@ -56,4 +63,4 @@ function send(res, status, obj) {
   res.status(status).json(obj);
 }
 
-module.exports = { sb, sha256, CODE_RE, EMAIL_RE, clean, validDate, ownerFor, unsubToken, send };
+module.exports = { sb, sha256, CODE_RE, EMAIL_RE, clean, stripLinks, validDate, ownerFor, unsubToken, send };

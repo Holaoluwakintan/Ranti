@@ -12,6 +12,10 @@ module.exports = async (req, res) => {
   const got = await sb('ranti_owners?select=key_hash&owner_code=eq.' + code);
   if (!got.ok) return send(res, 502, { error: 'store unavailable' });
   if (!got.data.length) {
+    // Abuse guard (audit 2026-10-08): at most 60 new links per 10 minutes across all phones.
+    const since = new Date(Date.now() - 10 * 60 * 1000).toISOString();
+    const fresh = await sb('ranti_owners?select=owner_code&created_at=gte.' + since + '&limit=61');
+    if (fresh.ok && fresh.data.length >= 60) return send(res, 429, { error: 'busy, try again later' });
     const ins = await sb('ranti_owners', { method: 'POST', body: { owner_code: code, key_hash: hash, name, last_seen: new Date().toISOString() }, prefer: 'return=minimal' });
     if (!ins.ok) return send(res, ins.status === 409 ? 409 : 502, { error: 'could not register' });
     return send(res, 200, { ok: true, created: true });
